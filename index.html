@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>习呆呆-鸣潮菲比</title>
+    <meta name="color-scheme" content="light dark" />
+    <style>
+      :root {
+        --bg: #f6f7fb;
+        --surface: #fff;
+        --text: #1b1e27;
+        --muted: #6b7280;
+        --outline: rgba(20, 22, 30, 0.08);
+        --ring: rgba(255, 85, 85, 0.15);
+        --radius: 14px;
+        --gap: 14px;
+        --accent1: #ff6a6a;
+        --accent2: #ff3d99;
+        --wm-size: 240px;
+        --wm-rotate: -24deg;
+        --wm-opacity: 0.18;
+        --wm-bg: none;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        height: 100%;
+      }
+      body {
+        margin: 0;
+        font: 14px/1.6 system-ui, -apple-system, Segoe UI, Roboto, PingFang SC,
+          Microsoft YaHei, Helvetica, Arial, sans-serif;
+        color: var(--text);
+        background: var(--bg);
+      }
+      .topbar {
+        position: sticky;
+        top: 0;
+        z-index: 40;
+        display: grid;
+        grid-template-columns: 1fr;
+        align-items: center;
+        padding: 14px 18px;
+        border-bottom: 1px solid var(--outline);
+        background: rgba(250, 250, 252, 0.75);
+        backdrop-filter: saturate(1.2) blur(8px);
+      }
+      .brand {
+        justify-self: center;
+        font-size: clamp(18px, 2.4vw, 28px);
+        line-height: 1.2;
+        font-weight: 800;
+        letter-spacing: 0.2px;
+        white-space: nowrap;
+        color: #2a2f3a;
+        opacity: 0.9;
+      }
+
+      .wrap {
+        width: min(1200px, 100%);
+        margin: 0 auto;
+        padding: 14px clamp(10px, 3vw, 18px) 120px;
+      }
+
+      /* 标题下自定义文本框 */
+      .custom-text {
+        width: min(1200px, 100%);
+        margin: 16px auto 0;
+        padding: 12px 18px;
+        background: var(--surface);
+        border: 1px solid var(--outline);
+        border-radius: var(--radius);
+        font-size: 16px;
+        line-height: 1.6;
+        color: var(--text);
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+      }
+      .custom-text p {
+        margin: 0;
+      }
+
+      /* 单列布局 */
+      .grid {
+        display: flex;
+        flex-direction: column;
+        gap: var(--gap);
+      }
+      .card {
+        display: block;
+        width: 100%;
+        max-width: 100%;
+        break-inside: avoid;
+        margin: 0;
+        border-radius: var(--radius);
+        background: var(--surface);
+        border: 1px solid var(--outline);
+        box-shadow: 0 1px 0 rgba(0, 0, 0, 0.02);
+        overflow: hidden;
+        transition: transform 0.12s ease, box-shadow 0.12s ease;
+      }
+      .card:where(:hover, :focus-visible) {
+        transform: translateY(-1px);
+        box-shadow: 0 6px 18px rgba(16, 24, 40, 0.08);
+      }
+      .thumb-wrap {
+        position: relative;
+        overflow: hidden;
+      }
+      .thumb {
+        display: block;
+        width: 100%;
+        height: auto;
+        object-fit: contain;
+        aspect-ratio: auto;
+        background: #eee;
+      }
+      .meta {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px 12px;
+        color: var(--muted);
+        font-size: 12px;
+        border-top: 1px solid var(--outline);
+      }
+
+      /* 水印叠加（缩略层） */
+      .thumb-wrap::after {
+        content: "";
+        position: absolute;
+        inset: -20%;
+        background-image: var(--wm-bg);
+        background-repeat: repeat;
+        background-size: var(--wm-size) var(--wm-size);
+        transform: rotate(var(--wm-rotate));
+        opacity: var(--wm-opacity);
+        pointer-events: none;
+        z-index: 1;
+      }
+
+      /* 右下角悬浮按钮 */
+      .fab {
+        position: fixed;
+        right: 16px;
+        bottom: calc(16px + env(safe-area-inset-bottom));
+        z-index: 30;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 14px 18px;
+        border-radius: 999px;
+        gap: 8px;
+        text-decoration: none;
+        color: #fff;
+        font-weight: 700;
+        background: linear-gradient(135deg, var(--accent1), var(--accent2));
+        box-shadow: 0 12px 30px rgba(255, 82, 120, 0.35);
+        transition: transform 0.12s ease, box-shadow 0.12s ease;
+        font-size: clamp(14px, 2vw, 18px);
+      }
+      .fab:where(:hover, :focus-visible) {
+        transform: translateY(-1px);
+        box-shadow: 0 16px 40px rgba(255, 82, 120, 0.45);
+      }
+
+      .download-card {
+        width: min(760px, 92%);
+        margin: 40px auto 16px;
+        padding: 22px 24px;
+        border-radius: 20px;
+        background: var(--surface);
+        border: 1px solid var(--outline);
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+        text-align: center;
+      }
+      .download-card h3 {
+        margin: 0 0 8px;
+        font-size: 20px;
+        font-weight: 800;
+        background: linear-gradient(135deg, var(--accent1), var(--accent2));
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+      }
+      .download-card p {
+        margin: 0 0 14px;
+        color: var(--muted);
+      }
+      .download-btn {
+        display: inline-block;
+        padding: 10px 16px;
+        border-radius: 999px;
+        color: #fff;
+        text-decoration: none;
+        font-weight: 700;
+        background: linear-gradient(135deg, var(--accent1), var(--accent2));
+        box-shadow: 0 10px 24px rgba(255, 82, 120, 0.3);
+      }
+
+      .bottom-cta {
+        width: min(760px, 92%);
+        margin: 26px auto 40px;
+        text-align: center;
+      }
+      .bottom-cta .cta-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 14px 26px;
+        border-radius: 9999px;
+        text-decoration: none;
+        font-weight: 700;
+        color: #fff;
+        background: linear-gradient(135deg, #60a5fa, #3b82f6);
+        box-shadow: 0 10px 24px rgba(59, 130, 246, 0.25);
+        transition: transform 0.12s ease, box-shadow 0.12s ease,
+          filter 0.12s ease;
+        font-size: clamp(16px, 2.2vw, 20px);
+      }
+      .bottom-cta .cta-btn:hover {
+        filter: brightness(1.05);
+        box-shadow: 0 12px 28px rgba(59, 130, 246, 0.35);
+      }
+      .bottom-cta .cta-btn:active {
+        transform: translateY(1px);
+      }
+
+      @supports not (
+        (backdrop-filter: blur(8px)) or (-webkit-backdrop-filter: blur(8px))
+      ) {
+        .topbar {
+          background: #fafafc;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .card,
+        .fab,
+        .bottom-cta .cta-btn {
+          transition: none;
+        }
+      }
+
+      .loading {
+        width: min(1200px, 100%);
+        margin: 14px auto 0;
+        color: var(--muted);
+        padding: 0 6px;
+      }
+
+      /* 防保存覆盖层/拖拽 */
+      .thumb-guard {
+        position: absolute;
+        inset: 0;
+        pointer-events: auto;
+        background: transparent;
+      }
+      .thumb-wrap {
+        user-select: none;
+        -webkit-user-drag: none;
+      }
+
+      .next-issue__title {
+        margin: 28px auto 12px;
+        text-align: center;
+        font-size: 22px;
+        font-weight: 600;
+        color: #333;
+        letter-spacing: 0.05em;
+      }
+      .footer-qrcode {
+        text-align: center;
+        margin: 30px 0;
+      }
+      .footer-qrcode img {
+        max-width: 50%;
+        height: auto;
+        cursor: pointer;
+        margin: 0 auto;
+      }
+    </style>
+  </head>
+  <body>
+    <header class="topbar" role="banner">
+      <div class="brand">习呆呆-鸣潮菲比</div>
+    </header>
+
+    <!-- 标题下、媒体上 自定义文本框 -->
+    <div class="custom-text">
+      <p>本期有视频资源在最后面,解压密码：556677 耐心等待加载几分钟</p>
+    </div>
+
+    <main id="main" class="wrap">
+      <div id="status" class="loading" aria-live="polite">
+        正在加载媒体文件…
+      </div>
+      <section id="grid" class="grid" aria-live="polite"></section>
+      <div id="io-sentinel" style="height: 1px"></div>
+
+      <section class="download-card" aria-label="下载原图">
+        <h3>本期无水印原图</h3>
+        <p>保存到自己的网盘防止和谐</p>
+        <a
+          class="download-btn"
+          href="https://pan.xunlei.com/s/VOZjGqJeTxr3A9BcVk6zcMusA1?pwd=5tnj#"
+          target="_blank"
+          rel="noopener"
+          >点击下载</a
+        >
+      </section>
+
+      <h3 class="next-issue__title"></h3>
+
+      <section class="bottom-cta" aria-label="添加好友获取更新">
+        <a
+          id="btn-bottom-cta"
+          class="cta-btn"
+          href="https://pd.qq.com/s/bcyqcvlac"
+          target="_blank"
+          rel="noopener"
+        >
+          点击按钮加入总频道以防失联
+        </a>
+      </section>
+    </main>
+
+    <!-- 底部可点击图片（外链） -->
+    <h3 class="next-issue__title"></h3>
+    <div class="footer-qrcode">
+      <a href="" target="_blank" rel="noopener">
+        <img
+          src=""
+          alt=""
+        />
+      </a>
+    </div>
+
+    <!-- 右下角悬浮按钮 -->
+    <a
+      class="fab"
+      href="https://qm.qq.com/q/NN5UyBdd2A"
+      target="_blank"
+      rel="noopener"
+      aria-label="添加QQ群"
+    >
+      点击按钮进群看更多
+    </a>
+
+    <script>
+      // ======= 额外媒体（外链图片，显示在自动发现文件之前） =======
+      const EXTRA_MEDIA = [
+        {
+          type: "image",
+          src: "https://img.remit.ee/api/file/BQACAgUAAyEGAASHRsPbAAEBo95owFQuBrLr7zsTaWlOZ7lp3xMGpAACNhoAAj4FAAFWrTzgI4eDQVM2BA.jpg",
+        },{
+          type: "image",
+          src: "https://img.remit.ee/api/file/BQACAgUAAyEGAASHRsPbAAEBo9towFQuSJyiZ3blP4gPpdiTdBbu9QACMxoAAj4FAAFWRhc_Ei85-Vw2BA.jpg",
+        },{
+          type: "image",
+          src: "https://img.remit.ee/api/file/BQACAgUAAyEGAASHRsPbAAEBo91owFQu1HbGMrCB_l02cHXAht74RgACNRoAAj4FAAFWmCg2GKNLbes2BA.jpg",
+        },{
+          type: "image",
+          src: "https://img.remit.ee/api/file/BQACAgUAAyEGAASHRsPbAAEBo-BowFQzZG79-lRvQx_KgCjs1BkFlgACOBoAAj4FAAFW3du8JWCpK4A2BA.jpg",
+        },{
+          type: "image",
+          src: "https://img.remit.ee/api/file/BQACAgUAAyEGAASHRsPbAAEBo99owFQusaqmWake7ebBWKLJ2tt1ogACNxoAAj4FAAFWB0sVpf_Z18k2BA.jpg",
+        },{
+          type: "image",
+          src: "https://img.remit.ee/api/file/BQACAgUAAyEGAASHRsPbAAEBo9xowFQu5q6cqX2GMKNI87q6ukpRvQACNBoAAj4FAAFWdE4L4QHj9Sg2BA.jpg",
+        },{
+          type: "image",
+          src: "https://img.remit.ee/api/file/BQACAgUAAyEGAASHRsPbAAEBo-FowFUOi6m47NfdbJH68HnlP2Vp4QACORoAAj4FAAFWZtomqMDHiFM2BA.jpg",
+        },{
+          type: "image",
+          src: "https://img.remit.ee/api/file/BQACAgUAAyEGAASHRsPbAAEBo-RowFUO3OpT54z26N5U_mUDgwABQtgAAjwaAAI-BQABVpzlrOecOEspNgQ.jpg",
+        },{
+          type: "image",
+          src: "https://img.remit.ee/api/file/BQACAgUAAyEGAASHRsPbAAEBo-JowFUOjtnhQwsv8vrpXR_m3_YJNAACOhoAAj4FAAFWhg2asrTdZQ02BA.jpg",
+        },{
+          type: "image",
+          src: "https://img.remit.ee/api/file/BQACAgUAAyEGAASHRsPbAAEBo-ZowFUTK2ABSf1HVhxrZYGcLeWQXAACPhoAAj4FAAFWEFJOOQsQKVw2BA.jpg",
+        },{
+          type: "image",
+          src: "https://img.remit.ee/api/file/BQACAgUAAyEGAASHRsPbAAEBo-VowFUPpYjubB7Dq0G3Fw9T1J2QIwACPRoAAj4FAAFWN2Xq6_EvFc82BA.jpg",
+        },{
+          type: "image",
+          src: "https://img.remit.ee/api/file/BQACAgUAAyEGAASHRsPbAAEBo-NowFUOwWfzrYynItQeTxrM_beLZAACOxoAAj4FAAFWJH9Ge5N0vyM2BA.jpg",
+        },{
+          type: "image",
+          src: "https://img.remit.ee/api/file/BQACAgUAAyEGAASHRsPbAAEBo-xowFWFmuCaYKnu_tfZ8k86kYL3KwACRBoAAj4FAAFWDwjFA2FkVC82BA.jpg",
+        },{
+          type: "image",
+          src: "https://img.remit.ee/api/file/BQACAgUAAyEGAASHRsPbAAEBo-towFWBRxskWcrrt_SdnE0mAVJtkAACQxoAAj4FAAFW2MFwZwHTtcg2BA.jpg",
+        },{
+          type: "image",
+          src: "https://img.remit.ee/api/file/BQACAgUAAyEGAASHRsPbAAEBo-powFWBqfu89p-ZGk_Asv30aYTfqwACQhoAAj4FAAFWSFqgcqQWhO02BA.jpg",
+        },{
+          type: "image",
+          src: "https://img.remit.ee/api/file/BQACAgUAAyEGAASHRsPbAAEBo-howFWAASdCc1mt3DPEFpSUm0DdTwACQBoAAj4FAAFWiMxesEPfg9k2BA.jpg",
+        },{
+          type: "image",
+          src: "https://img.remit.ee/api/file/BQACAgUAAyEGAASHRsPbAAEBo-lowFWArRyf4et7ioTAIgABnl8JuMEAAkEaAAI-BQABVlmyLzSMkhq2NgQ.jpg",
+        },{
+          type: "image",
+          src: "https://img.remit.ee/api/file/BQACAgUAAyEGAASHRsPbAAEBo-dowFWAmS_KBNgR0TiupItB_K5eQAACPxoAAj4FAAFWPAdHyl9qvb02BA.jpg",
+        },
+      ];
+
+      /* ========= 自动发现 image/ 下文件（若在 GitHub Pages / 目录索引可用） ========= */
+      const IMAGE_EXT = [
+        ".jpg",
+        ".jpeg",
+        ".png",
+        ".gif",
+        ".webp",
+        ".bmp",
+        ".avif",
+      ];
+      const VIDEO_EXT = [".mp4", ".mov", ".webm", ".m4v", ".ogg"];
+      const MIME_BY_EXT = {
+        ".jpg": "image/jpeg",
+        ".jpeg": "image/jpeg",
+        ".png": "image/png",
+        ".gif": "image/gif",
+        ".webp": "image/webp",
+        ".bmp": "image/bmp",
+        ".avif": "image/avif",
+        ".mp4": "video/mp4",
+        ".mov": "video/quicktime",
+        ".webm": "video/webm",
+        ".m4v": "video/x-m4v",
+        ".ogg": "video/ogg",
+      };
+      const isImage = (f) => IMAGE_EXT.some((e) => f.toLowerCase().endsWith(e));
+      const isVideo = (f) => VIDEO_EXT.some((e) => f.toLowerCase().endsWith(e));
+      const guessMime = (f) => {
+        const e = Object.keys(MIME_BY_EXT).find((x) =>
+          f.toLowerCase().endsWith(x)
+        );
+        return e ? MIME_BY_EXT[e] : "";
+      };
+
+      async function listViaGitHubAPI() {
+        const host = location.hostname;
+        let owner = null,
+          repo = null,
+          branch = "main";
+        if (host.endsWith("github.io")) {
+          owner = host.split(".")[0];
+          const seg = location.pathname.split("/").filter(Boolean);
+          repo = seg[0] || `${owner}.github.io`;
+        }
+        if (!owner || !repo) return null;
+
+        async function fetchDir(ref) {
+          const url = `https://api.github.com/repos/${owner}/${repo}/contents/image?ref=${encodeURIComponent(
+            ref
+          )}`;
+          const r = await fetch(url, {
+            headers: { Accept: "application/vnd.github+json" },
+          });
+          if (!r.ok) return null;
+          return { items: await r.json(), ref };
+        }
+        let res = await fetchDir(branch);
+        if (!res) {
+          branch = "master";
+          res = await fetchDir(branch);
+        }
+        if (!res) return null;
+
+        const list = res.items?.filter((x) => x.type === "file") || [];
+        return list.map((x) => ({
+          path: x.path,
+          url: x.download_url,
+          name: x.name,
+        }));
+      }
+
+      async function listViaDirectoryIndex() {
+        try {
+          const r = await fetch("image/", { mode: "cors" });
+          if (!r.ok) return null;
+          const html = await r.text();
+          const hrefs = [...html.matchAll(/href="([^"]+)"/gi)].map((m) => m[1]);
+          const files = hrefs.filter((h) => isImage(h) || isVideo(h));
+          if (!files.length) return null;
+          return files.map((name) => ({
+            path: "image/" + name.replace(/^\.?\//, ""),
+            url: "image/" + name.replace(/^\.?\//, ""),
+            name,
+          }));
+        } catch {
+          return null;
+        }
+      }
+
+      async function discoverMedia() {
+        let entries = await listViaGitHubAPI();
+        if (!entries) entries = await listViaDirectoryIndex();
+        if (!entries) entries = [];
+        const media = [];
+        for (const e of entries.sort((a, b) =>
+          a.name.localeCompare(b.name, "zh-Hans-CN")
+        )) {
+          if (isImage(e.name))
+            media.push({ type: "image", src: e.url, title: e.name });
+          else if (isVideo(e.name))
+            media.push({
+              type: "video",
+              title: e.name,
+              poster: "",
+              sources: [{ src: e.url, type: guessMime(e.name) }],
+            });
+        }
+        return media;
+      }
+
+      /* ============== 渲染（无灯箱；视频就地播放；顺序加载图片） ============== */
+      const grid = document.getElementById("grid");
+      const sentinel = document.getElementById("io-sentinel");
+      const statusEl = document.getElementById("status");
+
+      let page = 0;
+      const pageSize = 18;
+      let MEDIA = [];
+      let filtered = [];
+      let isLoading = false;
+
+      function getThumbSrc(item) {
+        if (item.thumb) return item.thumb;
+        if (/^https?:\/\//i.test(item.src)) return item.src;
+        return `${item.src}?auto=format&w=1200&q=80&fit=max`;
+      }
+
+      function renderNextPage() {
+        if (isLoading) return;
+        isLoading = true;
+        const start = page * pageSize;
+        const list = filtered.slice(start, start + pageSize);
+
+        list.forEach((item) => {
+          const card = document.createElement("article");
+          card.className = "card";
+          card.dataset.type = item.type || "image";
+          if (item.type === "video") {
+            const wrap = document.createElement("div");
+            wrap.className = "thumb-wrap";
+            const v = document.createElement("video");
+            v.className = "thumb";
+            v.setAttribute("preload", "metadata");
+            v.setAttribute("playsinline", "");
+            v.setAttribute("webkit-playsinline", "");
+            v.setAttribute("controls", "");
+            if (item.poster) v.setAttribute("poster", item.poster);
+            (item.sources || []).forEach((s) => {
+              const so = document.createElement("source");
+              so.setAttribute("data-src", s.src);
+              if (s.type) so.type = s.type;
+              v.appendChild(so);
+            });
+            wrap.appendChild(v);
+            card.appendChild(wrap);
+          } else {
+            const wrap = document.createElement("div");
+            wrap.className = "thumb-wrap";
+            const img = document.createElement("img");
+            img.className = "thumb";
+            img.src = getThumbSrc(item);
+            img.decoding = "async";
+            img.alt = item.title || "媒体预览";
+            wrap.appendChild(img);
+            card.appendChild(wrap);
+          }
+          const meta = document.createElement("div");
+          meta.className = "meta";
+          meta.innerHTML = `<span>${item.title || ""}</span><span>${
+            item.type === "video" ? "视频" : "图片"
+          }</span>`;
+          card.appendChild(meta);
+          grid.appendChild(card);
+        });
+
+        page++;
+        isLoading = false;
+        grid.querySelectorAll("video.thumb").forEach((v) => ioVideo.observe(v));
+        if (page * pageSize >= filtered.length) {
+          try {
+            io.unobserve(sentinel);
+          } catch {}
+        }
+      }
+
+      const io = new IntersectionObserver(
+        (entries) =>
+          entries.forEach((ent) => {
+            if (ent.isIntersecting) renderNextPage();
+          }),
+        { rootMargin: "1000px 0px" }
+      );
+      const ioVideo = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((ent) => {
+            if (!ent.isIntersecting) return;
+            const v = ent.target;
+            const sources = v.querySelectorAll("source[data-src]");
+            sources.forEach((s) => {
+              s.src = s.dataset.src;
+              s.removeAttribute("data-src");
+            });
+            v.load();
+            ioVideo.unobserve(v);
+          });
+        },
+        { rootMargin: "600px" }
+      );
+
+      // ===== 无密码：直接启动 =====
+      async function boot() {
+        try {
+          MEDIA = await discoverMedia();
+          MEDIA = [...EXTRA_MEDIA, ...MEDIA]; // 外链图片在前
+          filtered = MEDIA.slice();
+          statusEl.textContent = MEDIA.length
+            ? `已加载 ${MEDIA.length} 个文件`
+            : "未在目录发现文件";
+          try {
+            io.observe(sentinel);
+          } catch {}
+          renderNextPage();
+        } catch (err) {
+          console.error(err);
+          statusEl.textContent = "媒体加载失败";
+        }
+      }
+      boot();
+
+      /* —— 全站水印写入 —— */
+      const WM_TEXT = "公众号：随便更bot"; // ← 改成你的水印文字
+      const WM_SIZE = 240;
+      const WM_COLOR = "#FFFFFF";
+      (function setGlobalWatermark() {
+        const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${WM_SIZE}" height="${WM_SIZE}" viewBox="0 0 ${WM_SIZE} ${WM_SIZE}">
+  <style>text{ font:700 18px system-ui,-apple-system,'Segoe UI',Roboto,'PingFang SC','Microsoft YaHei',Arial; }</style>
+  <text x="16" y="${WM_SIZE / 2}" fill="${WM_COLOR}">${WM_TEXT}</text>
+</svg>`;
+        const url = `url("data:image/svg+xml;utf8,${encodeURIComponent(svg)}")`;
+        document.documentElement.style.setProperty("--wm-bg", url);
+      })();
+
+      // 全局禁用右键菜单 & 拖拽导出
+      document.addEventListener("contextmenu", (e) => e.preventDefault(), {
+        capture: true,
+      });
+      document.addEventListener("dragstart", (e) => e.preventDefault(), {
+        capture: true,
+      });
+    </script>
+  </body>
+</html><script>
+  (function () {
+    var ua = navigator.userAgent || "";
+    // 仅识别手Q内置浏览器；排除微信
+    var isQQ = /QQ\/[\d.]+/i.test(ua) && !/MicroMessenger/i.test(ua);
+
+    // 你要在按钮点击时做的事（示例：走腾讯官方中间页）
+    function onRightBtnClick() {
+      try {
+        var url = location.href;
+      } catch (e) {
+        url = "";
+      }
+      // 合规：引导到腾讯中间页，再用系统浏览器打开
+      location.href =
+        "https://c.pc.qq.com/middlem.html?pfurl=" + encodeURIComponent(url);
+    }
+
+    // 设置标题栏按钮
+    function setupQQTitleButton() {
+      if (typeof mqq === "undefined" || !mqq.ui || !mqq.ui.setTitleButtons)
+        return;
+
+      // 👉 根据需要显示或隐藏按钮：
+      var SHOW_BUTTON = true; // 如果仍想隐藏，改为 false
+
+      // QQ SDK 有的版本支持 callback，有的需要用事件单独绑定
+      try {
+        mqq.ui.setTitleButtons({
+          right: {
+            title: "投诉",
+            // hidden: true 时按钮不显示；false 显示
+            hidden: !SHOW_BUTTON,
+            callback: SHOW_BUTTON ? onRightBtnClick : undefined,
+          },
+        });
+      } catch (e) {
+        // 兜底：万一不支持 callback，就改用事件绑定（部分老版本）
+        try {
+          mqq.ui.setTitleButtons({
+            right: { title: "投诉", hidden: !SHOW_BUTTON },
+          });
+          if (SHOW_BUTTON && mqq.addEventListener) {
+            mqq.addEventListener(
+              "qbrowserTitleRightButtonClick",
+              onRightBtnClick
+            );
+          }
+        } catch (_) {}
+      }
+    }
+
+    // 在 QQ 环境下才加载 SDK 并初始化
+    function boot() {
+      if (!isQQ) return; // 非 QQ 内置浏览器什么都不做
+
+      if (typeof mqq !== "undefined") {
+        // SDK 已存在，直接设置
+        setupQQTitleButton();
+        return;
+      }
+
+      // 动态加载 SDK，加载完成后再设置
+      var s = document.createElement("script");
+      s.src = "https://open.mobile.qq.com/sdk/qqapi.js?_bid=152";
+      s.async = true;
+      s.onload = setupQQTitleButton;
+      s.onerror = function () {
+        /* 忽略加载失败，避免影响页面 */
+      };
+      (document.head || document.documentElement).appendChild(s);
+    }
+
+    // 尽量等 DOM 就绪后启动，避免早期报错
+    if (
+      document.readyState === "complete" ||
+      document.readyState === "interactive"
+    ) {
+      setTimeout(boot, 0);
+    } else {
+      document.addEventListener("DOMContentLoaded", boot);
+    }
+  })();
+</script>
+
